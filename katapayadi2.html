@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Katapayadi Cipher</title>
+
+<style>
+
+/* ---------- BASIC ---------- */
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  font-family:Arial, sans-serif;
+  background:#100806;
+  color:#f5ead8;
+  line-height:1.6;
+}
+
+.container{
+  width:90%;
+  max-width:1000px;
+  margin:auto;
+}
+
+/* ---------- NAVBAR ---------- */
+
+nav{
+  background:#1d0e0b;
+  padding:18px 0;
+  border-bottom:1px solid #5a3424;
+  position:sticky;
+  top:0;
+  z-index:10;
+}
+
+nav .container{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.logo{
+  color:#e3ad45;
+  font-size:22px;
+  font-weight:bold;
+}
+
+nav a{
+  color:#d9c8ae;
+  text-decoration:none;
+  margin-left:20px;
+  font-size:14px;
+}
+
+nav a:hover{
+  color:#e3ad45;
+}
+
+/* ---------- HERO ---------- */
+
+.hero{
+  text-align:center;
+  padding:90px 20px;
+  background:
+  radial-gradient(circle at top,#492116,#100806 65%);
+}
+
+.hero h1{
+  font-size:48px;
+  margin:0;
+  color:#e3ad45;
+}
+
+.hero h1 span{
+  color:#f5ead8;
+}
+
+.hero p{
+  color:#bca990;
+  max-width:650px;
+  margin:15px auto 30px;
+}
+
+.button{
+  display:inline-block;
+  padding:12px 25px;
+  background:#e3ad45;
+  color:#160b07;
+  text-decoration:none;
+  border-radius:8px;
+  font-weight:bold;
+  border:none;
+  cursor:pointer;
+}
+
+.button:hover{
+  transform:translateY(-2px);
+  opacity:.9;
+}
+
+/* ---------- SECTIONS ---------- */
+
+section{
+  padding:60px 0;
+}
+
+.title{
+  text-align:center;
+  margin-bottom:35px;
+}
+
+.title h2{
+  color:#e3ad45;
+  font-size:30px;
+  margin-bottom:5px;
+}
+
+.title p{
+  color:#a99781;
+}
+
+/* ---------- CARDS ---------- */
+
+.card{
+  background:#21100d;
+  border:1px solid #4b2b21;
+  border-radius:14px;
+  padding:25px;
+  margin-bottom:20px;
+  box-shadow:0 10px 30px rgba(0,0,0,.25);
+}
+
+.card h3{
+  color:#e3ad45;
+  margin-top:0;
+}
+
+/* ---------- ENCRYPT BOX ---------- */
+
+.box{
+  background:linear-gradient(145deg,#24120e,#170a08);
+  border:1px solid #5b3425;
+  border-radius:15px;
+  padding:30px;
+  margin-bottom:25px;
+}
+
+label{
+  display:block;
+  margin:12px 0 6px;
+  color:#dbc8ad;
+  font-weight:bold;
+}
+
+textarea,
+input{
+  width:100%;
+  padding:13px;
+  background:#0c0504;
+  border:1px solid #543125;
+  color:white;
+  border-radius:8px;
+  outline:none;
+  font-size:16px;
+}
+
+textarea{
+  height:100px;
+  resize:vertical;
+}
+
+textarea:focus,
+input:focus{
+  border-color:#e3ad45;
+}
+
+.result{
+  margin-top:20px;
+  padding:18px;
+  background:#0b0504;
+  border:1px solid #e3ad45;
+  border-radius:8px;
+  color:#e3ad45;
+  font-family:monospace;
+  word-break:break-all;
+  min-height:50px;
+}
+
+/* ---------- MAPPING ---------- */
+
+.mapping{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+}
+
+.map{
+  background:#21100d;
+  border:1px solid #4b2b21;
+  padding:15px;
+  border-radius:8px;
+}
+
+.map strong{
+  color:#e3ad45;
+  font-size:20px;
+  margin-right:10px;
+}
+
+.map span{
+  color:#c7b69f;
+}
+
+/* ---------- FLOW ---------- */
+
+.flow{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.step{
+  background:#21100d;
+  border:1px solid #5b3425;
+  padding:15px 20px;
+  border-radius:10px;
+  color:#e3ad45;
+  font-weight:bold;
+}
+
+.arrow{
+  color:#e3ad45;
+  font-size:25px;
+}
+
+/* ---------- FOOTER ---------- */
+
+footer{
+  text-align:center;
+  padding:30px;
+  border-top:1px solid #4b2b21;
+  color:#8e7c68;
+  font-size:14px;
+}
+
+/* ---------- MOBILE ---------- */
+
+@media(max-width:600px){
+
+  .hero h1{
+    font-size:36px;
+  }
+
+  nav .container{
+    flex-direction:column;
+    gap:10px;
+  }
+
+  nav a{
+    margin:0 7px;
+  }
+
+  .mapping{
+    grid-template-columns:1fr;
+  }
+
+  .box{
+    padding:20px;
+  }
+}
+
+</style>
+</head>
+
+
+<body>
+
+<!-- NAVIGATION -->
+
+<nav>
+<div class="container">
+
+<div class="logo">⚜ Katapayadi</div>
+
+<div>
+<a href="#about">About</a>
+<a href="#encrypt">Encrypt</a>
+<a href="#decrypt">Decrypt</a>
+<a href="#mapping">Mapping</a>
+</div>
+
+</div>
+</nav>
+
+
+<!-- HERO -->
+
+<header class="hero">
+
+<h1>Katapayadi <span>Cipher</span></h1>
+
+<p>
+An educational encryption system inspired by the ancient
+Katapayadi number system of India.
+</p>
+
+<a href="#encrypt" class="button">
+Start Encrypting
+</a>
+
+</header>
+
+
+<!-- ABOUT -->
+
+<section id="about">
+
+<div class="container">
+
+<div class="title">
+<h2>What is Katapayadi?</h2>
+<p>Ancient number system meets modern web technology</p>
+</div>
+
+<div class="card">
+
+<h3>🏛 Ancient System</h3>
+
+<p>
+Katapayadi is an ancient Indian system where Sanskrit
+consonants were associated with numbers. It was used
+especially in Kerala for remembering astronomical
+numbers and calculations.
+</p>
+
+</div>
+
+<div class="card">
+
+<h3>🔐 Our Cipher</h3>
+
+<p>
+This project converts letters into Katapayadi-inspired
+numbers and then adds a keyword-based shift.
+The same keyword can be used to decrypt the message.
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- ENCRYPT -->
+
+<section id="encrypt">
+
+<div class="container">
+
+<div class="title">
+<h2>🔒 Encrypt Message</h2>
+<p>Convert your message into encrypted numbers</p>
+</div>
+
+<div class="box">
+
+<label>Enter Message</label>
+
+<textarea id="message"
+placeholder="Example: NAMASTE"></textarea>
+
+
+<label>Enter Keyword</label>
+
+<input id="key" value="GURUKUL">
+
+
+<br><br>
+
+<button class="button" onclick="encrypt()">
+Encrypt Message
+</button>
+
+<div class="result" id="encrypted">
+Encrypted result will appear here...
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- DECRYPT -->
+
+<section id="decrypt">
+
+<div class="container">
+
+<div class="title">
+<h2>🔓 Decrypt Message</h2>
+<p>Convert encrypted numbers back into text</p>
+</div>
+
+<div class="box">
+
+<label>Encrypted Code</label>
+
+<textarea id="cipher"
+placeholder="Example: 70-20-71-20"></textarea>
+
+
+<button class="button" onclick="decrypt()">
+Decrypt Message
+</button>
+
+<div class="result" id="decrypted">
+Decrypted message will appear here...
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- FLOW -->
+
+<section>
+
+<div class="container">
+
+<div class="title">
+<h2>⚙ How It Works</h2>
+</div>
+
+<div class="flow">
+
+<div class="step">MESSAGE</div>
+
+<div class="arrow">→</div>
+
+<div class="step">KATAPAYADI</div>
+
+<div class="arrow">→</div>
+
+<div class="step">+ KEY</div>
+
+<div class="arrow">→</div>
+
+<div class="step">ENCRYPTED</div>
+
+<div class="arrow">→</div>
+
+<div class="step">− KEY</div>
+
+<div class="arrow">→</div>
+
+<div class="step">MESSAGE</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- MAPPING -->
+
+<section id="mapping">
+
+<div class="container">
+
+<div class="title">
+<h2>🔢 Katapayadi Mapping</h2>
+<p>Our simplified A-Z mapping</p>
+</div>
+
+<div class="mapping">
+
+<div class="map">
+<strong>0</strong>
+<span>A E I O U</span>
+</div>
+
+<div class="map">
+<strong>1</strong>
+<span>K P Q</span>
+</div>
+
+<div class="map">
+<strong>2</strong>
+<span>T B</span>
+</div>
+
+<div class="map">
+<strong>3</strong>
+<span>G D</span>
+</div>
+
+<div class="map">
+<strong>4</strong>
+<span>C J</span>
+</div>
+
+<div class="map">
+<strong>5</strong>
+<span>N M</span>
+</div>
+
+<div class="map">
+<strong>6</strong>
+<span>S Z</span>
+</div>
+
+<div class="map">
+<strong>7</strong>
+<span>H V</span>
+</div>
+
+<div class="map">
+<strong>8</strong>
+<span>L R Y</span>
+</div>
+
+<div class="map">
+<strong>9</strong>
+<span>F W X</span>
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- LIMITATION -->
+
+<section>
+
+<div class="container">
+
+<div class="card">
+
+<h3>⚠ Important</h3>
+
+<p>
+This is an educational cipher created to demonstrate
+how historical number systems can be combined with
+basic encryption concepts. It is not intended to provide
+modern cryptographic security.
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+
+<footer>
+
+Katapayadi Cipher Project • BSc IT
+
+</footer>
+
+
+<script>
+
+/* KATAPAYADI MAPPING */
+
+const letters = {
+
+A:0,E:0,I:0,O:0,U:0,
+
+K:10,P:11,Q:12,
+
+T:20,B:21,
+
+G:30,D:31,
+
+C:40,J:41,
+
+N:50,M:51,
+
+S:60,Z:61,
+
+H:70,V:71,
+
+L:80,R:81,Y:82,
+
+F:90,W:91,X:92
+
+};
+
+
+/* CREATE KEY */
+
+function getKey(word){
+
+let key=0;
+
+for(let letter of word.toUpperCase()){
+
+if(letter in letters){
+
+key += Math.floor(letters[letter]/10);
+
+}
+
+}
+
+return key % 100;
+
+}
+
+
+/* ENCRYPT */
+
+function encrypt(){
+
+let message=
+document.getElementById("message").value.toUpperCase();
+
+let word=
+document.getElementById("key").value;
+
+let key=getKey(word);
+
+let result=[];
+
+for(let letter of message){
+
+if(letter==" "){
+
+result.push((99+key)%100);
+
+}
+
+else if(letter in letters){
+
+let code=letters[letter];
+
+result.push(
+String((code+key)%100).padStart(2,"0")
+);
+
+}
+
+}
+
+let output=result.join("-");
+
+document.getElementById("encrypted").innerText=output;
+
+document.getElementById("cipher").value=output;
+
+}
+
+
+/* DECRYPT */
+
+function decrypt(){
+
+let code=
+document.getElementById("cipher").value;
+
+let word=
+document.getElementById("key").value;
+
+let key=getKey(word);
+
+let reverse={};
+
+
+/* REVERSE MAPPING */
+
+for(let letter in letters){
+
+reverse[letters[letter]]=letter;
+
+}
+
+let result="";
+
+
+for(let number of code.split("-")){
+
+let value=
+(parseInt(number)-key+100)%100;
+
+if(value==99){
+
+result+=" ";
+
+}
+
+else if(value in reverse){
+
+result+=reverse[value];
+
+}
+
+}
+
+document.getElementById("decrypted").innerText=result;
+
+}
+
+</script>
+
+</body>
+</html>
